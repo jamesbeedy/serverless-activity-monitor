@@ -1,4 +1,4 @@
-# Activity Tracker
+# Activity Monitor
 
 Simple CRUD interface using [Serverless](https://serverless.com)
 

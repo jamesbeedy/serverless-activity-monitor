@@ -1,4 +1,4 @@
-service: activity-tracker
+service: activity-monitor
 
 plugins:
   - serverless-python-requirements
