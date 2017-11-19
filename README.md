@@ -15,6 +15,15 @@ Python importable module
 To use the CLI and python package, please configure the `LAMBDA_URL_PREFIX` in `cli/config.py` to
 the desired lambda url prefix.
 
+To deploy the serverless application, just run `sls deploy` from this directory.
+
+## Serverless Example
+To deploy this api:
+
+```bash
+sls deploy
+```
+
 ## Web API Usage Examples
 The CRUD API is capible of preforming the following operations on an `activity_type`:
 
