@@ -1,3 +1,113 @@
 #!/usr/bin/env python3
+# Copyright (c) 2017 James Beedy <jamesbeedy@gmail.com>
 
-import 
+from argparse import ArgumentParser
+import json
+import jsonify
+import urllib3
+from urllib.parse import urlencode
+
+
+def create_parser():
+    parser = ArgumentParser(
+        description='activity-tracker',
+        prog='activity-tracker'
+    )
+
+    parser.add_argument(
+        'operation',
+        help='Web request method to make',
+        metavar='operation',
+        type=str,
+        choices=['create', 'list', 'get', 'update', 'delete']
+    )
+    parser.add_argument(
+        '-a',
+        '--activity',
+        required=False,
+        type=str,
+        help='Data to add to request'
+    )
+    parser.add_argument(
+        '-d',
+        '--data',
+        nargs="+",
+        default=False,
+        required=False,
+        help='Activity type to update - only used with "update" operation'
+    )
+
+    parser.add_argument(
+        '-v',
+        '--version',
+        action='version',
+        version='%(prog)s 0.0.1'
+    )
+
+    parser.add_argument(
+        "-f",
+        '--format',
+        help='format to floating-point',
+        dest='format',
+        const=True,
+        action='store_const',
+        default='json'
+    )
+    return parser
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+
+    ctxt = {}
+
+    if args.operation == 'create':
+        create_args = {'activity_type': args.activity}
+        encoded_data = json.dumps(create_args).encode('utf-8')
+        ctxt['body'] = encoded_data
+        ctxt['headers'] = {'Content-Type': 'application/json'}
+        ctxt['method'] = 'POST'
+        ctxt['url'] = \
+            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
+             'activities')
+
+    elif args.operation == 'list':
+        ctxt['method'] = 'GET'
+        ctxt['url'] = \
+            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
+            'activities')
+
+    elif args.operation == 'get':
+        ctxt['method'] = 'GET'
+        ctxt['url'] = \
+            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
+             'activities/{}'.format(args.activity))
+
+    elif args.operation == 'update':
+        update_args = {'activities': args.data,
+                       'checked': True}
+        encoded_data = json.dumps(update_args).encode('utf-8')
+        ctxt['body'] = encoded_data
+        ctxt['headers'] = {'Content-Type': 'application/json'}
+        ctxt['method'] = 'PUT'
+        ctxt['url'] = \
+            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
+            'activities/{}'.format(args.activity))
+        print(ctxt['url'])
+
+    elif args.operation == 'delete':
+        ctxt['headers'] = {'Content-Type': 'application/json'}
+        ctxt['method'] = 'DELETE'
+        ctxt['url'] = \
+            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
+             'activities/{}'.format(args.activity))
+
+
+    http = urllib3.PoolManager()
+    r = http.request(**ctxt)
+    #print(json.dumps(json.loads(r.data.decode())))
+    print(r.data.decode())
+
+if __name__ == "__main__":
+    main()
