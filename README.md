@@ -18,10 +18,37 @@ the desired lambda url prefix.
 To deploy the serverless application, just run `sls deploy` from this directory.
 
 ## Serverless Example
-To deploy this api:
+To deploy this api, ensure you have the awscli configured (`aws configure`),
+then run the following comand from this directory:
 
 ```bash
 sls deploy
+```
+Wait a few moments while the infrastructure assembles, you should be presented with
+a notification that your deploy is complete, and the api endpoints ready.
+
+```bash
+Service Information
+service: activity-monitor
+stage: dev
+region: us-west-2
+stack: activity-monitor-dev
+api keys:
+  None
+endpoints:
+  POST - https://XXXXXXXXXX.execute-api.us-west-2.amazonaws.com/dev/activities
+  GET - https://XXXXXXXXXX.execute-api.us-west-2.amazonaws.com/dev/activities
+  GET - https://XXXXXXXXXX.execute-api.us-west-2.amazonaws.com/dev/activities/{activity_type}
+  PUT - https://XXXXXXXXXX.execute-api.us-west-2.amazonaws.com/dev/activities/{activity_type}
+  DELETE - https://XXXXXXXXXXX.execute-api.us-west-2.amazonaws.com/dev/activities/{activity_type}
+functions:
+  create: activity-monitor-dev-create
+  list: activity-monitor-dev-list
+  get: activity-monitor-dev-get
+  update: activity-monitor-dev-update
+  delete: activity-monitor-dev-delete
+Serverless: Publish service to Serverless Platform...
+Service successfully published! Your service details are available at:
 ```
 
 ## Web API Usage Examples
