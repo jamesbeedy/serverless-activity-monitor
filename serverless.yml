@@ -1,0 +1,115 @@
+service: lifestyle-balance-pynamodb
+
+plugins:
+  - serverless-python-requirements
+
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: dev
+  region: us-west-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+package:
+  include:
+    - activities/**
+  exclude:
+    - .git/**
+    - .travis.yml
+    - .tox/
+    - Makefile
+    - tox.ini
+    - node_modules/**
+    - .idea/**
+    - .requirements/**
+    - env/**
+    - README.md
+    - package.json
+    - package-lock.json
+    - requirements.txt
+    - test-requirements.txt
+    - cli/
+
+functions:
+  create:
+    handler: activities/create.create
+    events:
+      - http:
+          path: activities
+          method: post
+          cors: true
+  list:
+    handler: activities/list.list
+    events:
+      - http:
+          path: activities
+          method: get
+          cors: true
+  get:
+    handler: activities/get.get
+    events:
+      - http:
+          path: activities/{activity_type}
+          method: get
+          cors: true
+          integration: lambda
+          request:
+            paths:
+              activity_type: true
+
+  update:
+    handler: activities/update.update
+    events:
+      - http:
+          path: activities/{activity_type}
+          method: put
+          cors: true
+          integration: lambda
+          request:
+            paths:
+              actitity_type_id: true
+  delete:
+    handler: activities/delete.delete
+    events:
+      - http:
+          path: activities/{activity_type}
+          method: delete
+          cors: true
+          integration: lambda
+          request:
+            paths:
+              activity_type_id: true
+
+resources:
+  Resources:
+    ActivitiesDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: activity_type
+            AttributeType: S
+            
+        KeySchema:
+          -
+            AttributeName: activity_type
+            KeyType: HASH
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
