@@ -6,12 +6,26 @@ import json
 import jsonify
 import urllib3
 from urllib.parse import urlencode
+import yaml
+
+
+def url(activity=None):
+    if not activity:
+        BASE_URL = \
+            ('https://mv4wruyj5i.execute-api.us-west-2.amazonaws.com'
+             '/dev/activities')
+    else:
+        BASE_URL = \
+            ('https://mv4wruyj5i.execute-api.us-west-2.amazonaws.com'
+             '/dev/activities/{}'.format(activity))
+    return BASE_URL
+
 
 
 def create_parser():
     parser = ArgumentParser(
-        description='activity-tracker',
-        prog='activity-tracker'
+        description='activity-monitor',
+        prog='activity-monitor'
     )
 
     parser.add_argument(
@@ -23,8 +37,9 @@ def create_parser():
     )
     parser.add_argument(
         '-a',
-        '--activity',
+        '--activity-type',
         required=False,
+        dest="activity_type",
         type=str,
         help='Data to add to request'
     )
@@ -47,67 +62,94 @@ def create_parser():
     parser.add_argument(
         "-f",
         '--format',
-        help='format to floating-point',
+        help='format to json',
         dest='format',
-        const=True,
-        action='store_const',
-        default='json'
+        type=str,
+        default='default'
     )
     return parser
 
 
-def main():
-    parser = create_parser()
-    args = parser.parse_args()
+def get_activity_crud(operation, activity_type=None, data=None, format=None):
+    """Preform CRUD operation
+    operation (string) (valid choices): 'create', 'list', 'get', 'update', 'delete'
+    activity (string): an activity_type
+
+    returns: dict
+    """
 
     ctxt = {}
 
-    if args.operation == 'create':
-        create_args = {'activity_type': args.activity}
+    if operation == 'create':
+        create_args = {'activity_type': activity_type}
         encoded_data = json.dumps(create_args).encode('utf-8')
         ctxt['body'] = encoded_data
         ctxt['headers'] = {'Content-Type': 'application/json'}
         ctxt['method'] = 'POST'
-        ctxt['url'] = \
-            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
-             'activities')
+        ctxt['url'] = url()
 
-    elif args.operation == 'list':
+    elif operation == 'list':
         ctxt['method'] = 'GET'
-        ctxt['url'] = \
-            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
-            'activities')
+        ctxt['url'] = url()
 
-    elif args.operation == 'get':
+    elif operation == 'get':
+        ctxt['headers'] = {'Content-Type': 'application/json'}
         ctxt['method'] = 'GET'
-        ctxt['url'] = \
-            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
-             'activities/{}'.format(args.activity))
+        ctxt['url'] = url(activity_type)
 
-    elif args.operation == 'update':
-        update_args = {'activities': args.data,
+    elif operation == 'update':
+        update_args = {'activities': data,
                        'checked': True}
         encoded_data = json.dumps(update_args).encode('utf-8')
         ctxt['body'] = encoded_data
         ctxt['headers'] = {'Content-Type': 'application/json'}
         ctxt['method'] = 'PUT'
-        ctxt['url'] = \
-            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
-            'activities/{}'.format(args.activity))
-        print(ctxt['url'])
+        ctxt['url'] = url(activity_type)
 
-    elif args.operation == 'delete':
+    elif operation == 'delete':
         ctxt['headers'] = {'Content-Type': 'application/json'}
         ctxt['method'] = 'DELETE'
-        ctxt['url'] = \
-            ('https://uci2odsmic.execute-api.us-west-2.amazonaws.com/dev/'
-             'activities/{}'.format(args.activity))
-
+        ctxt['url'] = url(activity_type)
 
     http = urllib3.PoolManager()
     r = http.request(**ctxt)
-    #print(json.dumps(json.loads(r.data.decode())))
-    print(r.data.decode())
+    return json.loads(json.dumps(json.loads(r.data.decode())))
+
+
+def activity_response_output_parser(args, activity_crud):
+    """Parse output to something that makes sense for humans
+    """
+
+    if args.operation == 'create':
+        print("Created activity: {}\n".format(args.activity_type))
+
+    elif args.operation == 'list':
+        print("Types of activities:\n")
+        for act in activity_crud['items']:
+            print(act['activity_type'])
+
+    elif args.operation == 'get':
+        print("Activities associated with {}:\n".format(args.activity_type))
+        base = activity_crud
+        for act in json.loads(base['body'])['activities']:
+            print(act['S'])
+
+    elif args.operation == 'update':
+        print("Updated activity: {}\n".format(args.activity_type))
+
+    elif args.operation == 'delete':
+        print("Deleted activity: {}\n".format(args.activity_type))
+
+
+def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    activity_crud = get_activity_crud(**args.__dict__)
+    if args.format == 'default':
+        activity_response_output_parser(args, activity_crud)
+    elif args.format == 'json':
+        print(json.dumps(activity_crud))
+
 
 if __name__ == "__main__":
     main()
