@@ -5,6 +5,9 @@ from activities.activity_model import ActivityTypeModel
 
 
 def delete(event, context):
+    """Delete an activity_type
+    """
+
     try:
         found_activity_type = \
             ActivityTypeModel.get(hash_key=event['path']['activity_type'])
@@ -19,5 +22,4 @@ def delete(event, context):
                 'body': json.dumps(
                     {'error_message': 'Unable to delete the activity_type'})}
 
-    # create a response
     return {'statusCode': 204}

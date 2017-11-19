@@ -4,12 +4,16 @@ Simple CRUD interface using [Serverless](https://serverless.com)
 
 AND 
 
-Python CLI.
+Python CLI
 
 AND
 
 Python importable module
 
+
+# Usage Overview
+To use the CLI and python package, please configure the `LAMBDA_URL_PREFIX` in `cli/config.py` to
+the desired lambda url prefix.
 
 ## Web API Usage Examples
 The CRUD API is capible of preforming the following operations on an `activity_type`:

@@ -11,23 +11,25 @@ def update(event, context):
     data = event['body']
 
     if 'activity_type' not in data and 'checked' not in data:
-        logging.error('Validation Failed %s', data)
         return {'statusCode': 422,
                 'body': json.dumps({'error_message':
-                                    'Couldn\'t update the activity_type.'})}
+                                    'Trouble updating the activity_type,
+                                    'please debug.'})}
     try:
         found_activity_type = \
             ActivityTypeModel.get(hash_key=event['path']['activity_type'])
     except DoesNotExist:
         return {'statusCode': 404,
                 'body': json.dumps(
-                    {'error_message': 'Activity was not found'})}
+                    {'error_message': 'Activity_type not found'})}
 
     activity_type_changed = False
+
     if 'activities' in data and data['activities'] != \
        found_activity_type.activities:
         found_activity_type.activities = data['activities']
         activity_type_changed = True
+
     if 'checked' in data and data['checked'] != found_activity_type.checked:
         found_activity_type.checked = data['checked']
         activity_type_changed = True
@@ -37,6 +39,5 @@ def update(event, context):
     else:
         logging.info('Nothing changed did not update')
 
-    # create a response
     return {'statusCode': 200,
             'body': json.dumps(dict(found_activity_type))}

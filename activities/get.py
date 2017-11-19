@@ -5,6 +5,8 @@ from activities.activity_model import ActivityTypeModel
 
 
 def get(event, context):
+    """Get an actitity_type
+    """
 
     try:
         found_activity_type = \
