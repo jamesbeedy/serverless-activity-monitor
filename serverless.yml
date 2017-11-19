@@ -1,4 +1,4 @@
-service: lifestyle-balance-pynamodb
+service: activity-tracker
 
 plugins:
   - serverless-python-requirements
