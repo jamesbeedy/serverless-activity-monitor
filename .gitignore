@@ -2,6 +2,7 @@
 */__pycache__
 .Python
 env/
+.venv/
 build/
 develop-eggs/
 dist/

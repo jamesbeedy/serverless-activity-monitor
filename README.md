@@ -52,7 +52,7 @@ Service successfully published! Your service details are available at:
 ```
 
 ## Web API Usage Examples
-The CRUD API is capible of preforming the following operations on an `activity_type`:
+The CRUD API is capable of preforming the following operations on an `activity_type`:
 
     - create
     - list

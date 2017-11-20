@@ -7,4 +7,4 @@
 #
 # Please replace the XXXXXXXXXX below with the lambda url prefix for your application.
 
-LAMBDA_URL_PREFIX = "XXXXXXXXXX"
+LAMBDA_URL_PREFIX = "99un5l50x1"
