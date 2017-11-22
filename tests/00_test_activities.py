@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
 import json
 from nose.tools import assert_is_none, assert_equal, assert_true
+from random import SystemRandom
+
 from unittest.mock import Mock, patch
 
-from cli.activities_lib import (
+from serverless_activity_monitor.cli.activities_lib import (
     url,
     activity_type_get,
     activity_type_list,
@@ -12,11 +15,23 @@ from cli.activities_lib import (
 )
 
 
+def generate_random_string():
+    """Generate 10 char random string
+    """
+
+    def gen_chars():
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        for _ in range(9):
+            yield SystemRandom().choice(chars)
+
+    return ''.join(gen_chars())
+
+
 class TestActivitiesEndpoint(object):
     @classmethod
     def setup_class(cls):
         cls.mock_get_patcher = \
-            patch('serverless-activity-monitor.cli.activities_lib.activity_type_get')
+            patch('serverless_activity_monitor.cli.activities_lib')
         cls.mock_get = cls.mock_get_patcher.start()
 
     @classmethod
@@ -28,18 +43,16 @@ class TestActivitiesEndpoint(object):
         non-preexisting  activity_type
         """
         # Create a new activity that will not be in the database
-        new_activity = \
-            'activity-{}'.format(
-                ''.join(random.choice(string.lowercase) for x in range(X)))
+        new_activity = 'activity-{}'.format(generate_random_string())
 
         # Ensure activity_doesn't exist
       
         self.mock_get.return_value.ok = True
-        #activity_crud_get_resp = 
+        activity_crud_get_resp = new_activity
 
-        #self.mock_get.return_value = Mock()
+        self.mock_get.return_value = Mock()
         #self.mock_get.return_value.json.return_value = activity_crud_get_resp
 
-        #assert_equal(activity_crud_get_response,  )
+        assert_equal(activity_crud_get_resp, new_activity)
 
 
