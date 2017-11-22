@@ -269,7 +269,7 @@ Two forms of tests are packaged with this application:
 ### Lint tests
 To run the linting tests:
 ```bash
-make test
+make lint
 ```
 
 ### Functional tests
