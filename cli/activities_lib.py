@@ -34,8 +34,11 @@ def activity_type_get(activity_type):
 
     http = urllib3.PoolManager()
     r = http.request(**ctxt)
-    return [item['S'] for item in
-            json.loads(json.loads(r.data.decode())['body'])['activities']]
+    r_dict = json.loads(json.dumps(json.loads(r.data.decode())))
+    if not r_dict['statusCode'] == 200:
+        return None
+    else:
+        return [item['S'] for item in json.loads(r_dict['body'])['activities']]
 
 
 def activity_type_create(activity_type):
@@ -49,10 +52,10 @@ def activity_type_create(activity_type):
 
     http = urllib3.PoolManager()
     r = http.request(**ctxt)
-    if r.status == 201:
-        return "{} created".format(activity_type.lower())
+    if not r.status == 201:
+        return None
     else:
-        return "failed"
+        return "success"
 
 
 def activity_type_list():
@@ -61,7 +64,6 @@ def activity_type_list():
 
     http = urllib3.PoolManager()
     r = http.request(**ctxt)
-    print(r.__dict__)
     return [item['activity_type'] for item in
             json.loads(r.data.decode())['items']]
 
