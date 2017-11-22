@@ -2,7 +2,6 @@
 import json
 
 from nose.tools import (
-    assert_equal,
     assert_list_equal
 )
 
@@ -79,8 +78,8 @@ def test_delete_activity_type_pass():
     delete_activity_resp = activity_type_delete(new_activity_type)
 
     # Assert the new activity exists in the database
-    assert_equal(sorted(activity_type_list()),
-                 sorted(init_existing_activity_types))
+    assert_list_equal(sorted(activity_type_list()),
+                      sorted(init_existing_activity_types))
 
 
 def test_update_activity_type_pass():
@@ -112,4 +111,45 @@ def test_update_activity_type_pass():
     update_activity_type_resp = \
         activity_type_update(new_activity_type, new_activities)
 
-    assert_equal(sorted(new_activities), sorted(activity_type_get(new_activity_type)))
+    assert_list_equal(sorted(new_activities),
+                      sorted(activity_type_get(new_activity_type)))
+
+
+def test_list_activity_type_pass():
+    """Test that listing activity_types returns the expected
+    activity_types
+    """
+    # Generate a new activity_type that *should* not be in the database
+    new_activity_type = 'activity-type-{}'.format(generate_random_string())
+
+    # Check/ensure that new_activity_type doesn't already exist
+    init_existing_activity_types = activity_type_list()
+    if new_activity_type in init_existing_activity_types:
+        return False
+
+    # Create the new activity_type
+    create_new_activity_resp = activity_type_create(new_activity_type)
+
+    # Assert the new activity_type exists in the list, and that it is
+    # equal to the initial activity_type_list + new_activity_type
+    assert_list_equal(sorted(init_existing_activity_types + [new_activity_type]),
+                      sorted(activity_type_list()))
+
+
+def test_get_activities_for_activity_type_pass():
+    """Test that getting the activities for a singleton activity_type
+    returns the expected result
+    """
+    # Generate a new activity_type that *should* not be in the database
+    new_activity_type = 'activity-type-{}'.format(generate_random_string())
+
+    # Check/ensure that new_activity_type doesn't already exist
+    init_existing_activity_types = activity_type_list()
+    if new_activity_type in init_existing_activity_types:
+        return False
+
+    # Create the new activity_type
+    create_new_activity_resp = activity_type_create(new_activity_type)
+
+    # Assert that no activities exist for the new activity_type
+    assert_list_equal([], activity_type_get(new_activity_type))
