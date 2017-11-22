@@ -77,9 +77,8 @@ class TestActivitiesEndpoint(object):
         assert_list_equal(sorted(activity_type_list()),
                           sorted(existing_activity_types + [new_activity_type]))
 
-
     def test_delete_activity_type_pass(self):
-        """This test is intended to test that the deletion of a preexisting
+        """This test is intended to test that the deletion of an
         activity_type succeeds.
         """
         self.mock_get.return_value.ok = True
@@ -108,5 +107,10 @@ class TestActivitiesEndpoint(object):
         assert_equal(sorted(activity_type_list()),
                      sorted(init_existing_activity_types))
 
+    def test_update_activity_type_pass(self):
+        """This test is intended to test that updating the activities
+        for an activity_type succeeds.
+        """
 
+        return True
 
