@@ -2,4 +2,4 @@
 lint:
 	@tox
 test:
-	@nosetests3 --verbosity=2
+	@nosetests3 --verbosity=3

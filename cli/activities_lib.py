@@ -4,8 +4,11 @@
 import json
 import urllib3
 from urllib.parse import urlencode
+import sys
 
-from serverless_activity_monitor.cli.config import LAMBDA_URL_PREFIX
+sys.path.append('.')
+
+from cli.config import LAMBDA_URL_PREFIX
 
 
 # Disable ssl warnings for dev
