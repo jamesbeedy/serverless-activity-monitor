@@ -12,7 +12,7 @@ from cli.activities_lib import (
 )
 
 
-class TestActivities(object):
+class TestActivitiesEndpoint(object):
     @classmethod
     def setup_class(cls):
         cls.mock_get_patcher = \
@@ -23,23 +23,23 @@ class TestActivities(object):
     def teardown_class(cls):
         cls.mock_get_patcher.stop()
 
-    def test_activity_type_get(self):
-        """This test is intended to test the activity_type_get functionality
-        More to come ....
+    def test_create_new_activity_type(self):
+        """This test is intended to test the creation of a new,
+        non-preexisting  activity_type
         """
+        # Create a new activity that will not be in the database
+        new_activity = \
+            'activity-{}'.format(
+                ''.join(random.choice(string.lowercase) for x in range(X)))
+
+        # Ensure activity_doesn't exist
+      
         self.mock_get.return_value.ok = True
-        activity_crud_get_resp = activity_type_get('academia')
+        #activity_crud_get_resp = 
 
-        self.mock_get.return_value = Mock()
-        self.mock_get.return_value.json.return_value = activity_crud_get_resp
+        #self.mock_get.return_value = Mock()
+        #self.mock_get.return_value.json.return_value = activity_crud_get_resp
 
-        assert_equal(activity_crud_get_response,  )
-
-    def test_getting_todos_when_response_is_not_ok(self):
-        self.mock_get.return_value.ok = False
-        response = get_todos()
-
-        # If the response contains an error, I should get no todos.
-        assert_is_none(response)
+        #assert_equal(activity_crud_get_response,  )
 
 
