@@ -3,3 +3,5 @@ pytest
 pycodestyle
 nose
 requests
+charmhelpers
+mock
