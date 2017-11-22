@@ -2,6 +2,10 @@
 # Copyright (c) 2017 James Beedy <jamesbeedy@gmail.com>
 
 from argparse import ArgumentParser
+import sys
+
+sys.path.append('.')
+
 
 from activities_lib import (
     activity_response_output_parser,

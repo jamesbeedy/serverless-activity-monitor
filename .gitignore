@@ -1,4 +1,7 @@
 # Distribution / packaging
+cli/local_config.py
+*.pyc
+*/*.pyc
 __pycache__/
 */__pycache__/
 .Python
