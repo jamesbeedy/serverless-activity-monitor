@@ -10,6 +10,10 @@ AND
 
 Python importable module
 
+AND
+
+Functional + Linting + Lambda testing
+
 
 # Usage Overview
 To use the CLI and python package, please configure the `LAMBDA_URL_PREFIX` in `cli/config.py` to
@@ -256,19 +260,24 @@ activities
 ```
 
 ## Testing
-Two forms of tests are packaged with this application.
+Two forms of tests are packaged with this application:
 
     - linting
     - functional
 
-### Linting
-The linting functionality has is built into the `Makefile`. To lint the code in this repository run:
+
+### Lint tests
+To run the linting tests:
 ```bash
 make test
 ```
 
-### Functional
-Functional tests run as part of the labda service/framework.
+### Functional tests
+To run the functional tests:
+```bash
+make test
+```
+
 
 
 #### Copyright
