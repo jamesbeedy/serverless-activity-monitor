@@ -89,7 +89,6 @@ def activity_type_update(activity_type, data):
         return "fail"
 
 
-
 def activity_type_delete(activity_type):
     ctxt = {'headers': {'Content-Type': 'application/json'},
             'method': 'DELETE',
