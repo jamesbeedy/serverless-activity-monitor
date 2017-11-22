@@ -278,6 +278,22 @@ To run the functional tests:
 make test
 ```
 
+Expected result:
+```bash
+$ make test
+This test is intended to test that the creation of a non-preexisting ... ok
+This test is intended to test that the deletion of an ... ok
+This test is intended to test that updating the activities ... ok
+Test that listing activity_types returns the expected ... ok
+Test that getting the activities for a singleton activity_type ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 7.698s
+
+OK
+```
+
+
 
 
 #### Copyright
