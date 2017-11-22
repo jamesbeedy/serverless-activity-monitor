@@ -5,7 +5,7 @@ import json
 import urllib3
 from urllib.parse import urlencode
 
-from config import LAMBDA_URL_PREFIX
+from serverless_activity_monitor.cli.config import LAMBDA_URL_PREFIX
 
 
 # Disable ssl warnings for dev
@@ -27,51 +27,77 @@ def url(activity=None):
     return BASE_URL
 
 
-def get_activity_crud(operation, activity_type=None, data=None, format=None):
-    """Preform CRUD operation
-
-    operation (string) (valid choices):
-        'create', 'list', 'get', 'update', 'delete'
-
-    returns: response as dict
-    """
-
-    ctxt = {}
-
-    if operation == 'create':
-        create_args = {'activity_type': activity_type}
-        encoded_data = json.dumps(create_args).encode('utf-8')
-        ctxt['body'] = encoded_data
-        ctxt['headers'] = {'Content-Type': 'application/json'}
-        ctxt['method'] = 'POST'
-        ctxt['url'] = url()
-
-    elif operation == 'list':
-        ctxt['method'] = 'GET'
-        ctxt['url'] = url()
-
-    elif operation == 'get':
-        ctxt['headers'] = {'Content-Type': 'application/json'}
-        ctxt['method'] = 'GET'
-        ctxt['url'] = url(activity_type)
-
-    elif operation == 'update':
-        update_args = {'activities': data,
-                       'checked': True}
-        encoded_data = json.dumps(update_args).encode('utf-8')
-        ctxt['body'] = encoded_data
-        ctxt['headers'] = {'Content-Type': 'application/json'}
-        ctxt['method'] = 'PUT'
-        ctxt['url'] = url(activity_type)
-
-    elif operation == 'delete':
-        ctxt['headers'] = {'Content-Type': 'application/json'}
-        ctxt['method'] = 'DELETE'
-        ctxt['url'] = url(activity_type)
+def activity_type_get(activity_type):
+    ctxt = {'headers': {'Content-Type': 'application/json'},
+            'method': 'GET',
+            'url': url(activity_type)}
 
     http = urllib3.PoolManager()
     r = http.request(**ctxt)
-    return json.loads(json.dumps(json.loads(r.data.decode())))
+    r_dict = json.loads(json.dumps(json.loads(r.data.decode())))
+    if not r_dict['statusCode'] == 200:
+        return None
+    else:
+        return [item['S'] for item in json.loads(r_dict['body'])['activities']]
+
+
+def activity_type_create(activity_type):
+    create_args = {'activity_type': activity_type}
+    encoded_data = json.dumps(create_args).encode('utf-8')
+
+    ctxt = {'body': encoded_data,
+            'headers': {'Content-Type': 'application/json'},
+            'method': 'POST',
+            'url': url()}
+
+    http = urllib3.PoolManager()
+    r = http.request(**ctxt)
+    if not r.status == 201:
+        return None
+    else:
+        return "success"
+
+
+def activity_type_list():
+    ctxt = {'method': 'GET',
+            'url': url()}
+
+    http = urllib3.PoolManager()
+    r = http.request(**ctxt)
+    return [item['activity_type'] for item in
+            json.loads(r.data.decode())['items']]
+
+
+def activity_type_update(activity_type, data):
+    update_args = {'activities': data,
+                   'checked': True}
+    encoded_data = json.dumps(update_args).encode('utf-8')
+
+    ctxt = {'body': encoded_data,
+            'headers': {'Content-Type': 'application/json'},
+            'method': 'PUT',
+            'url': url(activity_type)}
+
+    http = urllib3.PoolManager()
+    r = http.request(**ctxt)
+    if json.loads(json.dumps(json.loads(r.data.decode())))['statusCode'] == 200:
+        return "success"
+    else:
+        return "fail"
+
+
+
+def activity_type_delete(activity_type):
+    ctxt = {'headers': {'Content-Type': 'application/json'},
+            'method': 'DELETE',
+            'url': url(activity_type)}
+
+    http = urllib3.PoolManager()
+    r = http.request(**ctxt)
+    if json.loads(r.data.decode())['statusCode'] == 204:
+        return "success"
+    else:
+        return "fail"
 
 
 def activity_response_output_parser(args, activity_crud):

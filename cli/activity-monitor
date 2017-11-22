@@ -5,7 +5,11 @@ from argparse import ArgumentParser
 
 from activities_lib import (
     activity_response_output_parser,
-    get_activity_crud,
+    activity_type_get,
+    activity_type_list,
+    activity_type_update,
+    activity_type_delete,
+    activity_type_create,
 )
 
 
@@ -36,6 +40,7 @@ def create_parser():
         nargs="+",
         default=False,
         required=False,
+        dest="data",
         help='Activity type to update - only used with "update" operation'
     )
 
@@ -60,11 +65,23 @@ def create_parser():
 def main():
     parser = create_parser()
     args = parser.parse_args()
-    activity_crud = get_activity_crud(**args.__dict__)
-    if args.format == 'default':
-        activity_response_output_parser(args, activity_crud)
-    elif args.format == 'json':
-        print(json.dumps(activity_crud))
+
+    if args.operation == 'get':
+        activity_crud = activity_type_get(args.activity_type)
+    elif args.operation == 'list':
+       activity_crud = activity_type_list()
+    elif args.operation == 'delete':
+       activity_crud = activity_type_delete(args.activity_type)
+    elif args.operation == 'update':
+       activity_crud = activity_type_update(args.activity_type, args.data)
+    elif args.operation == 'create':
+       activity_crud = activity_type_create(args.activity_type)
+
+    #if args.format == 'default':
+    #    activity_response_output_parser(args, activity_crud)
+    #elif args.format == 'json':
+    #    print(json.dumps(activity_crud))
+    print(activity_crud)
 
 
 if __name__ == "__main__":
