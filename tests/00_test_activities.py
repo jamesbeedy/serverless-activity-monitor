@@ -2,17 +2,12 @@
 import json
 
 from nose.tools import (
-    assert_is_none,
     assert_equal,
-    assert_true,
-    assert_in,
-    assert_not_equal,
     assert_list_equal
 )
 
 from random import SystemRandom, randint
 
-from unittest.mock import Mock, patch
 import sys
 
 sys.path.append('..')
