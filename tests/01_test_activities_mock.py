@@ -2,23 +2,11 @@
 # Copyright (c) 2017 James Beedy <jamesbeedy@gmail.com>
 
 import mock
-import tempfile
 import unittest
-from pathlib import Path
 
 
-from charmhelpers.core import unitdata
-
-
-class TestActivitiesEndpoint(unittest.TestCase):
+class TestMockActivitiesEndpoint(unittest.TestCase):
     def setUp(self):
-        tests_dir = Path(__file__).parent
-
-        tf = tempfile.NamedTemporaryFile(delete=False)
-        tf.close()
-        self.test_db = Path(tf.name)
-        unitdata._KV = self.kv = unitdata.Storage(str(self.test_db))
-
         self.possible_responses = {
             'create': [
                 {
